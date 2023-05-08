@@ -12,7 +12,7 @@ import { ApiRequest } from "@/types";
 export default defineEventHandler(async (event) => {
   try {
     const body = (await readBody(event)) as ApiRequest;
-    const complete = await hiOpenAPI(body);
+    const complete: any = await hiOpenAPI(body);
 
     setResStatus(event, complete.status, complete.statusText);
     return complete.data;
@@ -62,7 +62,10 @@ async function hiOpenAPI(body: ApiRequest) {
     // },
   };
 
+  console.log(model)
+  console.log(request['messages'])
   switch (model) {
+    
     case "chat":
       return openai.createChatCompletion(
         request as CreateChatCompletionRequest,

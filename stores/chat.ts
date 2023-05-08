@@ -183,7 +183,7 @@ export const useChatStore = defineStore("chat", () => {
           cipherAPIKey: setting.apiKey,
           model: "chat",
           request: {
-            model: "gpt-3.5-turbo",
+            model: "gpt-3.5-turbo-0301",
             messages: standardList.value,
             temperature: setting.temperature,
             stream: true,

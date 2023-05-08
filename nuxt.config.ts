@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   app: {
     head: {
-      title: "ChatGPT",
+      title: "灵凤",
       meta: [
         {
           name: "description",
@@ -10,6 +10,9 @@ export default defineNuxtConfig({
         },
       ],
     },
+  },
+  server: {
+    port: 3001,
   },
   modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt", "nuxt-icon"],
   css: ["highlight.js/styles/dark.css"],

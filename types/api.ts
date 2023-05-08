@@ -8,9 +8,10 @@ export type ApiRequestModel = "chat" | "text" | "img";
 
 export interface ApiRequest {
   cipherAPIKey: string;
-  model: ApiRequestModel;
+  model: ApiRequestModel | any;
   request:
     | CreateChatCompletionRequest
     | CreateCompletionRequest
-    | CreateImageRequest;
+    | CreateImageRequest
+    | any;
 }

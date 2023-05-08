@@ -41,6 +41,9 @@ npm run preview
 # or
 yarn preview
 ```
+docker exec -it nuxt /bin/sh
+
+docker run -d --name nuxt -p 3000:3000  nuxt
 
 ## Deploy
 

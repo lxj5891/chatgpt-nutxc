@@ -53,7 +53,7 @@ async function generateChatTitle(content: string) {
       cipherAPIKey: setting.apiKey,
       model: "chat",
       request: {
-        model: "gpt-3.5-turbo",
+        model: "gpt-3.5-turbo-0301",
         messages: [
           {
             role: "user",
