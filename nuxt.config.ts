@@ -1,4 +1,3 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   app: {
     head: {
@@ -10,9 +9,6 @@ export default defineNuxtConfig({
         },
       ],
     },
-  },
-  server: {
-    port: 3001,
   },
   modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt", "nuxt-icon"],
   css: ["highlight.js/styles/dark.css"],
