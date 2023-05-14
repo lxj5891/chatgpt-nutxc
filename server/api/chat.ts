@@ -4,13 +4,12 @@ import {
   CreateCompletionRequest,
   CreateImageRequest,
 } from "openai";
+
 import { OpenAIApi, Configuration } from "openai";
 import { aesCrypto } from "@/server/api/crypto";
 import { AxiosRequestConfig } from "axios";
 import { ApiRequest } from "@/types";
-import { postSignIn, postCheckToken } from "@/utils/postSignin"
-
-const HOST = 'localhost:8082'
+import { HOST, postSignIn, postCheckToken } from "@/utils/postSignin"
 
 export default defineEventHandler(async (event) => {
   try {
@@ -21,11 +20,15 @@ export default defineEventHandler(async (event) => {
   } catch (e: any) {
     // 很奇怪，在我的 mac 开发环境中报错时，response 永远是一个 Stream 对象
     // 但是在 Windows 开发环境和 Docker 中报错时，response 却是 undefined
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxx')
+    console.log(e.response.status)
+    if (e.response.status == 401) {
+      // setResStatus(event, 401, 'NoUser');
+      return new Error('401');
+    }
     if (e.response?.data) {
       setResStatus(event, e.response.status, e.response.data.statusText);
-
       let isStreamNull = true; // mac 开发环境中上，response 永远不是 undefined
-
       for await (const data of e.response.data) {
         isStreamNull = false;
         const message = data.toString();
@@ -36,7 +39,6 @@ export default defineEventHandler(async (event) => {
           return message;
         }
       }
-
       if (isStreamNull) {
         return e;
       }
@@ -58,9 +60,9 @@ async function hiOpenAPI(body: ApiRequest) {
     timeout: 1000 * 30,
     timeoutErrorMessage: "**网络连接超时，请重试**",
   };
-
   request.auth = accessToken
   const resultCheckToken = await postCheckToken(accessToken, request)
+  console.log(resultCheckToken)
   switch (model) {
     case "chat":
       return openai.createChatCompletion(

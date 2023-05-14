@@ -12,10 +12,9 @@ export const useChatStore = defineStore("chat", () => {
   const db = new ChatDB();
 
   let controller: AbortController;
-
   const showSetting = ref(false);
   const showHelp = ref(false);
-  const showSignIn = ref(false);
+  let showSignIn = ref(false);
   const showComboMeal = ref(false);
   
   const chats = ref<ChatItem[]>([]);
@@ -118,7 +117,6 @@ export const useChatStore = defineStore("chat", () => {
     message.sendDate = Date.now();
     const id = await db.message.put({ ...message });
     await getChatMessages(chatId);
-
     return id;
   }
 
@@ -198,11 +196,15 @@ export const useChatStore = defineStore("chat", () => {
         const { value } = await reader.read();
         const text = decoder.decode(value);
         // 处理服务端返回的异常消息并终止读取
-        if (status !== 200) {
+        if (status == 500) {
+          showSignIn.value = true
           const error = JSON.parse(text);
-          content += error.error?.message ?? error.message;
-          return await makeErrorMessage(assistantMessageId, content);
+          if (error.message == '401') {
+            return await makeErrorMessage(assistantMessageId, '用户未登录！');
+          }
+          return await makeErrorMessage(assistantMessageId, '系统异常，请稍后在试。');
         }
+
 
         // 读取正文
         for (const line of text.split(/\r?\n/)) {
@@ -210,6 +212,7 @@ export const useChatStore = defineStore("chat", () => {
           if (line === 'event:message') continue;
           if (line.startsWith(":")) continue;
           if (line === "=== [DONE]") return;
+          debugger
           
           let data:any = { choices: [{delta:{content: ''}}]}
           try {
@@ -221,6 +224,10 @@ export const useChatStore = defineStore("chat", () => {
           try {
             data = JSON.parse(line.substring(5));
             if (data && data.status == '[done]') {
+              return
+            }
+            if (data && data.status == '[nopoints]') {
+              await updateMessageContent(assistantMessageId, "请联系我们！");
               return
             }
             content += data.choice[0].delta.content ?? "";

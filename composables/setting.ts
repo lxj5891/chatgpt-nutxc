@@ -17,7 +17,6 @@ export function loadToken(): ChatSettingItem | undefined | string {
 
 export async function saveSetting(setting: ChatSettingOption) {
   const oldSetting = loadSetting();
-
   if (
     oldSetting?.apiKey !== setting.apiKey ||
     oldSetting.apiKey.includes("sk-") // 处理之前明文储存 API Key 的过度方法
