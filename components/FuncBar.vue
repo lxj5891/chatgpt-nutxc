@@ -13,13 +13,14 @@
 </template>
 
 <script setup lang="ts">
-import { Plus, Setting, Github, Router, Target } from "@icon-park/vue-next";
+import { Plus, Setting, Shade, Wechat, Github, Router, Target } from "@icon-park/vue-next";
 import { useChatStore } from "@/stores/chat";
 
 const store = useChatStore();
 const funcs = [
   { name: "新建聊天", type: "chat", icon: Plus },
   { name: "设置", type: "setting", icon: Setting },
+  { name: "套餐", type: "comboMeal", icon: Wechat },
 ];
 
 async function clickBtn(type: string) {
@@ -29,6 +30,8 @@ async function clickBtn(type: string) {
     store.showSetting = true;
   } else if (type === "github") {
     open("https://github.com/lianginx/chatgpt-nuxt", "_blank");
+  } else if (type === "comboMeal") {
+    store.showComboMeal = true;
   }
 }
 </script>

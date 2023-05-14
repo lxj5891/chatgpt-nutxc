@@ -14,4 +14,11 @@ export interface ApiRequest {
     | CreateCompletionRequest
     | CreateImageRequest
     | any;
+
+  accessToken: string;
 }
+
+export interface ApiSignInRequest {
+  user_no: string;
+}
+

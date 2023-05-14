@@ -12,3 +12,12 @@ export interface ChatSetting {
   apiKey: string;
   temperature: number;
 }
+
+
+export interface SignInValues {
+  user_no: string;
+}
+
+export interface ResMessage {
+  message: string;
+}

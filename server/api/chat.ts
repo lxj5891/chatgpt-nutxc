@@ -8,12 +8,14 @@ import { OpenAIApi, Configuration } from "openai";
 import { aesCrypto } from "@/server/api/crypto";
 import { AxiosRequestConfig } from "axios";
 import { ApiRequest } from "@/types";
+import { postSignIn, postCheckToken } from "@/utils/postSignin"
+
+const HOST = 'localhost:8082'
 
 export default defineEventHandler(async (event) => {
   try {
     const body = (await readBody(event)) as ApiRequest;
     const complete: any = await hiOpenAPI(body);
-
     setResStatus(event, complete.status, complete.statusText);
     return complete.data;
   } catch (e: any) {
@@ -45,27 +47,21 @@ export default defineEventHandler(async (event) => {
 });
 
 async function hiOpenAPI(body: ApiRequest) {
-  const { cipherAPIKey, model, request } = body;
-
-  const apiKey = aesCrypto({ message: cipherAPIKey, type: "de" });
-  const openai = new OpenAIApi(new Configuration({ apiKey }));
+  const { model, request, accessToken } = body;
+  const openai = new OpenAIApi(new Configuration({
+    apiKey: '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',
+    basePath: `http://${HOST}/${accessToken}`,
+  }));
 
   const requestConfig: AxiosRequestConfig = {
     responseType: "stream",
-    timeout: 1000 * 20,
+    timeout: 1000 * 30,
     timeoutErrorMessage: "**网络连接超时，请重试**",
-    // 使用代理，配置参考 https://axios-http.com/docs/req_config
-    // proxy: {
-    //   protocol: "http",
-    //   host: "127.0.0.1",
-    //   port: 7890,
-    // },
   };
 
-  console.log(model)
-  console.log(request['messages'])
+  request.auth = accessToken
+  const resultCheckToken = await postCheckToken(accessToken, request)
   switch (model) {
-    
     case "chat":
       return openai.createChatCompletion(
         request as CreateChatCompletionRequest,

@@ -28,6 +28,9 @@
       <div class="icon-btn block sm:hidden" @click="store.showSetting = true">
         <SettingOne size="22" />
       </div>
+      <div class="icon-btn block" @click="store.showSignIn = true">
+        <SettingOne size="22" />
+      </div>
     </div>
   </div>
 </template>
@@ -56,6 +59,8 @@ async function exitEditing() {
   await store.reChatName(chatId, editTitle.value);
   editTitle.value = "";
 }
+
+
 
 function clearMessages() {
   if (confirm("是否清空聊天记录？")) {

@@ -6,6 +6,16 @@
       class="absolute"
       :class="store.showHelp ? 'visible' : 'invisible'"
     />
+    <SignIn
+      class="absolute"
+      :class="store.showSignIn ? 'visible' : 'invisible'"
+    />
+
+    <ComboMeal
+      class="absolute"
+      :class="store.showComboMeal ? 'visible' : 'invisible'"
+    >
+    </ComboMeal>
     <ChatSideBar />
     <ChatSetting class="flex-1" v-if="store.showSetting" />
     <ChatContentBar class="flex-1" v-else />
@@ -18,10 +28,9 @@ import { ApiRequest } from "@/types";
 import hotkeys from "hotkeys-js";
 
 const store = useChatStore();
-
 // 页面初始化
-
 onMounted(() => initPage());
+
 
 async function initPage() {
   if (!loadSetting()) store.showSetting = true;
@@ -33,24 +42,26 @@ async function initPage() {
 watch(
   () => store.standardList,
   async (newValue, oldValue) => {
-    if (newValue.length !== 1 || oldValue.length !== 0) return;
-    if (!store.chat?.id) return;
-
-    const chatId = store.chat.id;
-    const title = await generateChatTitle(newValue[0].content);
-
-    store.reChatName(chatId, title);
+    // if (newValue.length !== 1 || oldValue.length !== 0) return;
+    // if (!store.chat?.id) return;
+    // const chatId = store.chat.id;
+    // const title = await generateChatTitle(newValue[0].content);
+    // store.reChatName(chatId, title);
   }
 );
 
 async function generateChatTitle(content: string) {
   const setting = loadSetting();
+  const accessToken = loadToken();
+  if (!accessToken) {
+    store.showSignIn = true
+  }
   if (!setting) return "";
-
   const complete = await $fetch("/api/chat", {
     method: "post",
     body: JSON.stringify({
       cipherAPIKey: setting.apiKey,
+      accessToken: accessToken,
       model: "chat",
       request: {
         model: "gpt-3.5-turbo-0301",
@@ -63,13 +74,11 @@ async function generateChatTitle(content: string) {
       },
     } as ApiRequest),
   });
-
   return complete.choices[0].message.content.trim().replace(/\。$/, ""); // 移除末尾的句号
 }
 
 // 注册全局快捷键
 // 中文文档：https://github.com/jaywcjlove/hotkeys/blob/master/README-zh.md
-
 hotkeys.filter = () => true; // input、textarea、select 组件默认不响应快捷键，true 表示启用快捷键
 
 // Option + R 开始新话题

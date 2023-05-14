@@ -1,6 +1,19 @@
 import { ChatSettingItem, ChatSettingOption } from "@/types";
 
 const key = "chatSetting";
+const accessTokenKey = "accessToken";
+
+export async function saveToken(token: string) {
+  localStorage.setItem(accessTokenKey, token);
+}
+
+export function loadToken(): ChatSettingItem | undefined | string {
+  const token = localStorage.getItem(accessTokenKey);
+  if (token) {
+    return token;
+  }
+}
+
 
 export async function saveSetting(setting: ChatSettingOption) {
   const oldSetting = loadSetting();

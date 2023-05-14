@@ -15,7 +15,9 @@ export const useChatStore = defineStore("chat", () => {
 
   const showSetting = ref(false);
   const showHelp = ref(false);
-
+  const showSignIn = ref(false);
+  const showComboMeal = ref(false);
+  
   const chats = ref<ChatItem[]>([]);
   const chat = ref<ChatItem>();
   const messages = ref<ChatMessageExItem[]>([]);
@@ -107,16 +109,13 @@ export const useChatStore = defineStore("chat", () => {
 
   async function createMessage(message: ChatMessageExOption) {
     if (!chat.value && !message.chatId) await createChat();
-
     const chatId = message.chatId ?? (chat.value as ChatItem).id;
-
     message.chatId = chatId;
     message.active = message.active ?? true;
     message.show = message.show ?? true;
     message.error = message.error ?? false;
     message.errorMessage = message.errorMessage ?? undefined;
     message.sendDate = Date.now();
-
     const id = await db.message.put({ ...message });
     await getChatMessages(chatId);
 
@@ -144,11 +143,9 @@ export const useChatStore = defineStore("chat", () => {
   async function sendMessage(message: ChatMessageExOption) {
     if (talking.value) return;
     if (!message?.content.trim()) return;
-
     const chatId = message.chatId ?? chat.value?.id;
     console.log("store chatId", chat.value?.id);
     console.log("message chatId", message.chatId);
-
     if (!chatId) return;
 
     const setting = loadSetting();
@@ -163,6 +160,7 @@ export const useChatStore = defineStore("chat", () => {
 
     // 追加到消息队列
     await createMessage(message);
+
     const assistantMessageId = await createMessage({
       role: "assistant",
       content: "",
@@ -174,13 +172,13 @@ export const useChatStore = defineStore("chat", () => {
 
     try {
       // 打印标准列表
-      console.log(standardList.value);
-
+      const accessToken = loadToken();
       // 发送请求
       const { status, body } = await fetch("/api/chat", {
         method: "post",
         body: JSON.stringify({
           cipherAPIKey: setting.apiKey,
+          accessToken: accessToken,
           model: "chat",
           request: {
             model: "gpt-3.5-turbo-0301",
@@ -198,9 +196,7 @@ export const useChatStore = defineStore("chat", () => {
 
       while (reader) {
         const { value } = await reader.read();
-
         const text = decoder.decode(value);
-
         // 处理服务端返回的异常消息并终止读取
         if (status !== 200) {
           const error = JSON.parse(text);
@@ -211,11 +207,27 @@ export const useChatStore = defineStore("chat", () => {
         // 读取正文
         for (const line of text.split(/\r?\n/)) {
           if (line.length === 0) continue;
+          if (line === 'event:message') continue;
           if (line.startsWith(":")) continue;
-          if (line === "data: [DONE]") return;
-
-          const data = JSON.parse(line.substring(6));
-          content += data.choices[0].delta.content ?? "";
+          if (line === "=== [DONE]") return;
+          
+          let data:any = { choices: [{delta:{content: ''}}]}
+          try {
+            data = JSON.parse(line.substring(6));
+            content += data.choices[0].delta.content ?? "";
+          } catch(e) {
+            console.log(e)
+          }
+          try {
+            data = JSON.parse(line.substring(5));
+            if (data && data.status == '[done]') {
+              return
+            }
+            content += data.choice[0].delta.content ?? "";
+          } catch(e) {
+            console.log(e)
+          }
+          
           await updateMessageContent(assistantMessageId, content);
         }
       }
@@ -232,7 +244,9 @@ export const useChatStore = defineStore("chat", () => {
 
   return {
     showSetting,
+    showComboMeal,
     showHelp,
+    showSignIn,
     chats,
     chat,
     messages,
