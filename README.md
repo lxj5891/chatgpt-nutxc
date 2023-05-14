@@ -1,4 +1,6 @@
 # chatgpt-nuxt
+docker build -t nutx .
+docker run -d -p 3000:3000 --name nutx nutx
 
 ![preview](/assets/preview-v2.png)
 
