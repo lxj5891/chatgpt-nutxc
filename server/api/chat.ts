@@ -60,9 +60,7 @@ async function hiOpenAPI(body: ApiRequest) {
     timeout: 1000 * 30,
     timeoutErrorMessage: "**网络连接超时，请重试**",
   };
-  request.auth = accessToken
-  const resultCheckToken = await postCheckToken(accessToken, request)
-  console.log(resultCheckToken)
+
   switch (model) {
     case "chat":
       return openai.createChatCompletion(
