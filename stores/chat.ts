@@ -212,8 +212,6 @@ export const useChatStore = defineStore("chat", () => {
           if (line === 'event:message') continue;
           if (line.startsWith(":")) continue;
           if (line === "=== [DONE]") return;
-          debugger
-          
           let data:any = { choices: [{delta:{content: ''}}]}
           try {
             data = JSON.parse(line.substring(6));

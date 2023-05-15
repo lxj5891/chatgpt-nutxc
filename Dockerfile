@@ -1,4 +1,3 @@
-# ---- Base Node ----
 FROM node:19-alpine
 WORKDIR /app
 COPY package.json ./
@@ -11,5 +10,6 @@ COPY . ./
 RUN npm run build
 EXPOSE 3000
 
+RUN export HOST=127.0.0.1
 # Start the application
 CMD ["node", ".output/server/index.mjs"]
