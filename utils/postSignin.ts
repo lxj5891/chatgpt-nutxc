@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-export const HOST = process.env.OPENAI_HOST || '172.9.3.81:8081'
+console.log(process.env.OPENAI_HOST)
+
+export const HOST = process.env.OPENAI_HOST || 'dev.sophoenix.com'
 
 export const postSignIn = (data: any): Promise<any> => {
     return new Promise((resolve, reject) => {
