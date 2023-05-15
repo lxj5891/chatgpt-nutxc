@@ -1,16 +1,8 @@
 <template>
   <div class="flex flex-col p-6 space-y-6">
     <div>
-      <label>API Key</label>
-      <input
-        type="password"
-        placeholder="请输入"
-        v-model.trim="setting.apiKey"
-      />
-    </div>
-    <div>
       <label class="space-x-3">
-        <span>temperature</span><span>{{ setting.temperature }}</span>
+        <span>温度</span><span style="margin-left: 20px;"> {{ setting.temperature }}</span>
       </label>
       <input
         type="range"

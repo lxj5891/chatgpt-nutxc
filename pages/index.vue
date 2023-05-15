@@ -31,7 +31,6 @@ const store = useChatStore();
 // 页面初始化
 onMounted(() => initPage());
 
-
 async function initPage() {
   if (!loadSetting()) store.showSetting = true;
   await store.setNotActiveDbMessages();
@@ -84,7 +83,6 @@ hotkeys.filter = () => true; // input、textarea、select 组件默认不响应�
 // Option + R 开始新话题
 hotkeys("option+r", (e) => {
   e.preventDefault();
-
   if (!store.messages.length) return;
   if (!store.chat) return;
 
@@ -97,10 +95,8 @@ hotkeys("option+r", (e) => {
 // Option + Shift + R 清空聊天记录
 hotkeys("option+shift+r", (e) => {
   e.preventDefault();
-
   if (!store.messages.length) return;
   if (!store.chat) return;
-
   store.clearMessages(store.chat.id);
 });
 
@@ -113,9 +109,7 @@ hotkeys("option+shift+n", (e) => {
 // Option + W 删除聊天
 hotkeys("option+w", (e) => {
   e.preventDefault();
-
   if (!store.chat) return;
-
   store.removeChat(store.chat.id);
 });
 </script>

@@ -139,6 +139,8 @@ export const useChatStore = defineStore("chat", () => {
   }
 
   async function sendMessage(message: ChatMessageExOption) {
+
+    debugger
     if (talking.value) return;
     if (!message?.content.trim()) return;
     const chatId = message.chatId ?? chat.value?.id;
@@ -151,7 +153,6 @@ export const useChatStore = defineStore("chat", () => {
       showSetting.value = true;
       return;
     }
-
     // 开始对话
     clearSendMessageContent();
     startTalking(chatId);
@@ -171,6 +172,10 @@ export const useChatStore = defineStore("chat", () => {
     try {
       // 打印标准列表
       const accessToken = loadToken();
+      let isFirstMessage = false;
+      if (standardList.value.length == 1) {
+        isFirstMessage = true
+      }
       // 发送请求
       const { status, body } = await fetch("/api/chat", {
         method: "post",
@@ -212,8 +217,6 @@ export const useChatStore = defineStore("chat", () => {
           if (line === 'event:message') continue;
           if (line.startsWith(":")) continue;
           if (line === "=== [DONE]") return;
-          debugger
-          
           let data:any = { choices: [{delta:{content: ''}}]}
           try {
             data = JSON.parse(line.substring(6));
@@ -234,8 +237,11 @@ export const useChatStore = defineStore("chat", () => {
           } catch(e) {
             console.log(e)
           }
-          
           await updateMessageContent(assistantMessageId, content);
+        }
+
+        if (isFirstMessage) {
+          await reChatName(chatId, message.content);
         }
       }
     } catch (e: any) {
