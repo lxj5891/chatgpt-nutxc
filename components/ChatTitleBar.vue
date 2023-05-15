@@ -29,14 +29,14 @@
         <SettingOne size="22" />
       </div>
       <div class="icon-btn block" @click="store.showSignIn = true">
-        <SettingOne size="22" />
+        <Login size="22" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Message, Clear, SettingOne, Help } from "@icon-park/vue-next";
+import { Message, Clear, SettingOne, Help, Login } from "@icon-park/vue-next";
 import { useChatStore } from "@/stores/chat";
 import { ChatItem } from "@/types";
 
