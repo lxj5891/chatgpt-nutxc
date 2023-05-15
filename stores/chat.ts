@@ -139,8 +139,6 @@ export const useChatStore = defineStore("chat", () => {
   }
 
   async function sendMessage(message: ChatMessageExOption) {
-
-    debugger
     if (talking.value) return;
     if (!message?.content.trim()) return;
     const chatId = message.chatId ?? chat.value?.id;

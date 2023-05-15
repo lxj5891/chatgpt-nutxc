@@ -55,7 +55,7 @@ async function hiOpenAPI(body: ApiRequest) {
     basePath: `http://${HOST}/${accessToken}`,
   }));
 
-  const requestConfig: AxiosRequestConfig = {
+  const requestConfig: any = {
     responseType: "stream",
     timeout: 1000 * 30,
     timeoutErrorMessage: "**网络连接超时，请重试**",
