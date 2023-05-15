@@ -37,12 +37,11 @@ onMounted(() => {
 });
 
 async function save() {
-  if (!setting.value.apiKey.trim()) return;
   store.showSetting = false;
   await saveSetting(setting.value);
   await store.openChat(store.chats[0]);
-  await store.sendMessage({ role: "user", content: "嘿！能听到我说话吗？" });
 }
+
 </script>
 
 <style scoped>
